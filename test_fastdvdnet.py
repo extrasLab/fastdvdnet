@@ -25,13 +25,14 @@ def save_out_seq(seqnoisy, seqclean, save_dir, sigmaval, suffix, save_noisy):
 		# Build Outname
 		fext = OUTIMGEXT
 		noisy_name = os.path.join(save_dir,\
-						('n{}_{}').format(sigmaval, idx) + fext)
+						('n{}_{}').format(sigmaval, str(idx).zfill(4)) + fext)
 		if len(suffix) == 0:
-			out_name = os.path.join(save_dir,\
-					('n{}_FastDVDnet_{}').format(sigmaval, idx) + fext)
+			#out_name = os.path.join(save_dir,\
+			#		('n{}_FastDVDnet_{}').format(sigmaval, str(idx).zfill(4)) + fext)
+			out_name = os.path.join(save_dir, str(idx).zfill(4) + fext)
 		else:
 			out_name = os.path.join(save_dir,\
-					('n{}_FastDVDnet_{}_{}').format(sigmaval, suffix, idx) + fext)
+					('n{}_FastDVDnet_{}_{}').format(sigmaval, suffix, str(idx).zfill(4)) + fext)
 
 		# Save result
 		if save_noisy:
@@ -98,8 +99,8 @@ def test_fastdvdnet(**args):
 		seq_time = time.time()
 
 		# Add noise
-		noise = torch.empty_like(seq).normal_(mean=0, std=args['noise_sigma']).to(device)
-		seqn = seq + noise
+		#noise = torch.empty_like(seq).normal_(mean=0, std=args['noise_sigma']).to(device)
+		seqn = seq #+ noise
 		noisestd = torch.FloatTensor([args['noise_sigma']]).to(device)
 
 		denframes = denoise_seq_fastdvdnet(seq=seqn,\
@@ -108,16 +109,16 @@ def test_fastdvdnet(**args):
 										model_temporal=model_temp)
 
 	# Compute PSNR and log it
-	stop_time = time.time()
-	psnr = batch_psnr(denframes, seq, 1.)
-	psnr_noisy = batch_psnr(seqn.squeeze(), seq, 1.)
-	loadtime = (seq_time - start_time)
-	runtime = (stop_time - seq_time)
-	seq_length = seq.size()[0]
-	logger.info("Finished denoising {}".format(args['test_path']))
-	logger.info("\tDenoised {} frames in {:.3f}s, loaded seq in {:.3f}s".\
-				 format(seq_length, runtime, loadtime))
-	logger.info("\tPSNR noisy {:.4f}dB, PSNR result {:.4f}dB".format(psnr_noisy, psnr))
+	#stop_time = time.time()
+	#psnr = batch_psnr(denframes, seq, 1.)
+	#psnr_noisy = batch_psnr(seqn.squeeze(), seq, 1.)
+	#loadtime = (seq_time - start_time)
+	#runtime = (stop_time - seq_time)
+	#seq_length = seq.size()[0]
+	#logger.info("Finished denoising {}".format(args['test_path']))
+	#logger.info("\tDenoised {} frames in {:.3f}s, loaded seq in {:.3f}s".\
+	#			 format(seq_length, runtime, loadtime))
+	#logger.info("\tPSNR noisy {:.4f}dB, PSNR result {:.4f}dB".format(psnr_noisy, psnr))
 
 	# Save outputs
 	if not args['dont_save_results']:
